@@ -1,0 +1,7 @@
+{
+    "item.enchanting_reimagined.enchantment_dust": "Enchantment Dust",
+    "item.enchanting_reimagined.enchantment_dust.tooltip": "Used in an enchantment workstation for upgrading enchanted books",
+    "item.enchanting_reimagined.curse_scrubber": "Curse Scrubber",
+    "item.enchanting_reimagined.curse_scrubber.tooltip": "Used in an enchantment workstation for removing curses from enchanted books",
+    "itemGroup.enchating_reimagined.enchanting_reimagined": "Enchanting Reimagined"
+}

@@ -1,13 +1,13 @@
 {
 	"schemaVersion": 1,
-	"id": "enchanting-reimagined",
+	"id": "enchanting_reimagined",
 	"version": "${version}",
 	"name": "Enchanting Reimagined",
 	"description": "Adds a new workstation for upgrading, applying, splitting books and more",
 	"authors": [
 		"Marcus Elg"
 	],
-	"icon": "assets/enchanting-reimagined/icon.png",
+	"icon": "assets/enchanting_reimagined/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
@@ -21,9 +21,9 @@
 		]
 	},
 	"mixins": [
-		"enchanting-reimagined.mixins.json",
+		"enchantingreimagined.mixins.json",
 		{
-			"config": "enchanting-reimagined.client.mixins.json",
+			"config": "enchantingreimagined.client.mixins.json",
 			"environment": "client"
 		}
 	],
