@@ -1,0 +1,8 @@
+{
+    "parent": "minecraft:block/cube_bottom_top",
+    "textures": {
+        "bottom": "enchanting_reimagined:block/enchanting_workstation_bottom",
+        "side": "enchanting_reimagined:block/enchanting_workstation_side",
+        "top": "enchanting_reimagined:block/enchanting_workstation_top"
+    }
+}
