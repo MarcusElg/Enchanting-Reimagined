@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:smelting",
+    "category": "misc",
+    "cookingtime": 200,
+    "experience": 0.1,
+    "ingredient": {
+        "item": "minecraft:enchanted_book"
+    },
+    "result": {
+        "id": "enchanting_reimagined:enchantment_dust"
+    }
+}
