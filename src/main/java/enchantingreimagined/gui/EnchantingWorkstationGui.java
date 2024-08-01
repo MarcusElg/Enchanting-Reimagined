@@ -1,6 +1,5 @@
 package enchantingreimagined.gui;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import enchantingreimagined.EnchantingReimagined;
@@ -144,7 +143,10 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
 
             // Scrubbing
             else if (input2.getItem() == EnchantingReimagined.CURSER_SCRUBBER) {
-
+                State state = scrubAwayCurses(config, input1, input2);
+                if (state != null) {
+                    return state;
+                }
             }
 
             else {
@@ -152,6 +154,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
                 return State.IncorrectSecondItem;
             }
         } else
+
         // Extracting
         if (input1.hasEnchantments() && input2.getItem() == Items.BOOK) {
             State state = extractEnchantments(config, input1);
@@ -159,13 +162,15 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
                 return state;
             }
         } else
+
         // Scrubbing
         if (input1.hasEnchantments() && input2.getItem() == EnchantingReimagined.CURSER_SCRUBBER) {
-            State state = scrubCursesItem(config, input1, input2);
+            State state = scrubAwayCurses(config, input1, input2);
             if (state != null) {
                 return state;
             }
         }
+
         // Repairing
         else if (input1.isDamaged() && input1.getItem().canRepair(input1, input2)) {
             State state = repairItem(config, input1, input2);
@@ -173,6 +178,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
                 return state;
             }
         }
+
         // Applying
         else if (input2.get(DataComponentTypes.STORED_ENCHANTMENTS) != null) {
             State state = applyEnchantments(config, input1, input2);
@@ -204,9 +210,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         Set<RegistryEntry<Enchantment>> enchantments = enchantmentComponent.getEnchantments();
         int xpExtractionCost = 0;
 
-        Iterator<RegistryEntry<Enchantment>> enchanmentIterator = enchantments.iterator();
-        while (enchanmentIterator.hasNext()) {
-            RegistryEntry<Enchantment> enchantment = enchanmentIterator.next();
+        for (RegistryEntry<Enchantment> enchantment : enchantments) {
             if (enchantment.isIn(EnchantmentTags.CURSE)) {
                 resetValues();
                 return State.HasCurse;
@@ -218,7 +222,6 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         }
 
         ItemStack outputStack = new ItemStack(Items.ENCHANTED_BOOK);
-        System.out.println("OUT" + outputStack);
         outputStack.set(DataComponentTypes.STORED_ENCHANTMENTS,
                 enchantmentComponent);
         blockInventory.setStack(OUTPUT1_ID, outputStack);
@@ -228,16 +231,23 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         return null;
     }
 
-    // Scrub away curses from item
-    private State scrubCursesItem(EnchantingReimaginedConfig config, ItemStack input1, ItemStack input2) {
+    // Scrub away curses from item or enchanted book
+    private State scrubAwayCurses(EnchantingReimaginedConfig config, ItemStack input1, ItemStack input2) {
         if (!config.scrubbing.allowScrubbing) {
             resetValues();
             return State.IncorrectSecondItem;
         }
 
         ItemStack outputStack = input1.copy();
-        Set<RegistryEntry<Enchantment>> enchantments = outputStack.getEnchantments().getEnchantments();
+        ItemEnchantmentsComponent enchantmentComponent;
+        if (input1.getItem() == Items.ENCHANTED_BOOK) {
+            enchantmentComponent = outputStack.get(DataComponentTypes.STORED_ENCHANTMENTS);
+        } else {
+            enchantmentComponent = outputStack.getEnchantments();
+        }
+        Set<RegistryEntry<Enchantment>> enchantments = enchantmentComponent.getEnchantments();
         int xpScrubbingCost = 0;
+
         // Calculate cost
         for (RegistryEntry<Enchantment> enchantment : enchantments) {
             if (enchantment.isIn(EnchantmentTags.CURSE)) {
@@ -253,14 +263,22 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
 
         // Create output component
         ItemEnchantmentsComponent.Builder outputComponentBuilder = new ItemEnchantmentsComponent.Builder(
-                outputStack.getEnchantments());
+                enchantmentComponent);
         outputComponentBuilder.remove(enchantment -> enchantment.isIn(EnchantmentTags.CURSE));
         ItemEnchantmentsComponent outputComponent = outputComponentBuilder.build();
 
-        if (!outputComponent.isEmpty()) {
-            outputStack.set(DataComponentTypes.ENCHANTMENTS, outputComponent);
+        if (input1.getItem() == Items.ENCHANTED_BOOK) {
+            if (!outputComponent.isEmpty()) {
+                outputStack.set(DataComponentTypes.STORED_ENCHANTMENTS, outputComponent);
+            } else {
+                outputStack = new ItemStack(Items.BOOK);
+            }
         } else {
-            outputStack.remove(DataComponentTypes.ENCHANTMENTS);
+            if (!outputComponent.isEmpty()) {
+                outputStack.set(DataComponentTypes.ENCHANTMENTS, outputComponent);
+            } else {
+                outputStack.remove(DataComponentTypes.ENCHANTMENTS);
+            }
         }
 
         blockInventory.setStack(OUTPUT1_ID, outputStack);
@@ -279,7 +297,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
 
         int repairCost = config.repairing.consistentRepairPrice ? config.repairing.repairPrice
                 : config.repairing.repairPrice
-                        + input1.getOrDefault(DataComponentTypes.REPAIR_COST, Integer.valueOf(0)).intValue();
+                        + input1.getOrDefault(DataComponentTypes.REPAIR_COST, 0);
 
         ItemStack outputStack = input1.copy();
         int repairAmount = Math.min(input1.getDamage(), input1.getMaxDamage() / 4);
