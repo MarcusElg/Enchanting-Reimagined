@@ -20,6 +20,8 @@ public class EnchantingReimaginedConfig implements ConfigData {
     public ApplyingConfig applying = new ApplyingConfig();
     @ConfigEntry.Gui.CollapsibleObject
     public CombiningConfig combining = new CombiningConfig();
+    @ConfigEntry.Gui.CollapsibleObject
+    public SplittingConfig splitting = new SplittingConfig();
 
     public static class RepairConfig {
         @ConfigEntry.Gui.Tooltip
@@ -79,8 +81,19 @@ public class EnchantingReimaginedConfig implements ConfigData {
         // workstation
         public boolean allowCombining = true;
         @ConfigEntry.Gui.Tooltip
-        @ConfigEntry.BoundedDiscrete(min = 0, max = 3)
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 50)
         // Cost for applying enchantments to an item
         public int combiningCost = 0;
+    }
+
+    public static class SplittingConfig {
+        @ConfigEntry.Gui.Tooltip
+        // If false disables the possibility to split enchanted books in an enchanting
+        // workstation
+        public boolean allowSplitting = true;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 50)
+        // Cost for splitting an enchanted book
+        public int splittingCost = 0;
     }
 }

@@ -37,7 +37,9 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
     private static final int INVENTORY_SIZE = 4;
 
     private enum State {
-        None, Crafted, NotEnoughXp, HasCurse, AlreadyMax, NoItem, IncorrectSecondItem, NotRepairable
+        None, Crafted, NotEnoughXp, HasCurse, AlreadyMax, HasNoCurse, OnlyOneEnchant, NonNewEnchantments, NoItem,
+        IncorrectSecondItem,
+        NotRepairable
     };
 
     private static boolean hasCrafted = false;
@@ -133,7 +135,10 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
 
             // Splitting
             else if (input2.getItem() == Items.BOOK) {
-
+                State state = splitBook(config, input1);
+                if (state != null) {
+                    return state;
+                }
             }
 
             // Upgrading
@@ -258,7 +263,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         // No curses
         if (xpScrubbingCost == 0) {
             resetValues();
-            return State.IncorrectSecondItem;
+            return State.HasNoCurse;
         }
 
         // Create output component
@@ -367,9 +372,56 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
             }
         }
 
+        // No new enchantments added
+        if (xpApplyingCost == 0) {
+            resetValues();
+            return State.NonNewEnchantments;
+        }
+
         outputStack.set(DataComponentTypes.ENCHANTMENTS, outputEnchantments.build());
         blockInventory.setStack(OUTPUT1_ID, outputStack);
         xpCost = xpApplyingCost;
+        secondInputUsageCount = 1;
+
+        return null;
+    }
+
+    // Transfer first enchantment from book over to new book
+    private State splitBook(EnchantingReimaginedConfig config, ItemStack input1) {
+        if (!config.splitting.allowSplitting) {
+            resetValues();
+            return State.IncorrectSecondItem;
+        }
+
+        ItemStack outputStack1 = input1.copy();
+        ItemStack outputStack2 = input1.copy();
+        ItemEnchantmentsComponent.Builder outputEnchantments1 = new ItemEnchantmentsComponent.Builder(
+                input1.get(DataComponentTypes.STORED_ENCHANTMENTS));
+        ItemEnchantmentsComponent.Builder outputEnchantments2 = new ItemEnchantmentsComponent.Builder(
+                ItemEnchantmentsComponent.DEFAULT);
+        ItemEnchantmentsComponent secondInputEnchantments = input1.get(DataComponentTypes.STORED_ENCHANTMENTS);
+
+        if (secondInputEnchantments.getEnchantments().stream()
+                .anyMatch(enchantment -> enchantment.isIn(EnchantmentTags.CURSE))) {
+            resetValues();
+            return State.HasCurse;
+        }
+
+        if (secondInputEnchantments.getEnchantments().size() < 2) {
+            resetValues();
+            return State.OnlyOneEnchant;
+        }
+
+        // Move one enchantment from book onto new book
+        RegistryEntry<Enchantment> chosenEnchantment = secondInputEnchantments.getEnchantments().iterator().next();
+        outputEnchantments1.remove(enchantment -> enchantment.equals(chosenEnchantment));
+        outputEnchantments2.add(chosenEnchantment, secondInputEnchantments.getLevel(chosenEnchantment));
+
+        outputStack1.set(DataComponentTypes.STORED_ENCHANTMENTS, outputEnchantments1.build());
+        outputStack2.set(DataComponentTypes.STORED_ENCHANTMENTS, outputEnchantments2.build());
+        blockInventory.setStack(OUTPUT1_ID, outputStack1);
+        blockInventory.setStack(OUTPUT2_ID, outputStack2);
+        xpCost = config.splitting.splittingCost;
         secondInputUsageCount = 1;
 
         return null;
