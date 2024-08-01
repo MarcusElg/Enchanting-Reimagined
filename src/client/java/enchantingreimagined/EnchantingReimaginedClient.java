@@ -1,11 +1,15 @@
 package enchantingreimagined;
 
+import enchantingreimagined.gui.EnchantingWorkstationGui;
+import enchantingreimagined.gui.EnchantingWorkstationScreen;
 import net.fabricmc.api.ClientModInitializer;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 
 public class EnchantingReimaginedClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		// This entrypoint is suitable for setting up client-specific logic, such as
-		// rendering.
+		HandledScreens.<EnchantingWorkstationGui, EnchantingWorkstationScreen>register(
+				EnchantingReimagined.ENCHANTING_WORKSTATION_SCREEN_TYPE,
+				(gui, inventory, title) -> new EnchantingWorkstationScreen(gui, inventory.player, title));
 	}
 }

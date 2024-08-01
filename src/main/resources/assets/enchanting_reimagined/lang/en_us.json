@@ -1,5 +1,8 @@
 {
     "block.enchanting_reimagined.enchanting_workstation": "Enchanting Workstation",
+    "container.enchanting_reimagined.enchanting_workstation": "Enchanting Workstation",
+    "container.enchanting_reimagined.enchanting_workstation.experience_cost": "Experience Cost: %s",
+    "stat.enchanting_reimagined.interact_with_enchanting_workstation": "Interactions with Enchanting Workstation",
     "item.enchanting_reimagined.enchantment_dust": "Enchantment Dust",
     "item.enchanting_reimagined.enchantment_dust.tooltip": "Used in an enchantment workstation for upgrading enchanted books",
     "item.enchanting_reimagined.curse_scrubber": "Curse Scrubber",

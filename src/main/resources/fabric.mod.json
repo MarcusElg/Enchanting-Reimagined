@@ -18,6 +18,9 @@
 		],
 		"fabric-datagen": [
 			"enchantingreimagined.EnchantingReimaginedDataGenerator"
+		],
+		"modmenu": [
+			"enchantingreimagined.EnchantingReimaginedModMenuIntegration"
 		]
 	},
 	"mixins": [
