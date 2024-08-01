@@ -66,9 +66,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         gridPanel = new WGridPanel();
         setTitleAlignment(HorizontalAlignment.CENTER);
 
-        WItemSlot input1 = WItemSlot.of(blockInventory, INPUT1_ID)
-                .setInputFilter(stack -> stack.getItem() == Items.ENCHANTED_BOOK || stack.isDamaged()
-                        || stack.hasEnchantments());
+        WItemSlot input1 = WItemSlot.of(blockInventory, INPUT1_ID);
         gridPanel.add(input1, 1, 1);
 
         WSprite plus = new WSprite(GuiHelper.PLUS_TEXTURE);
@@ -153,29 +151,23 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
                 resetValues();
                 return State.IncorrectSecondItem;
             }
-        } else if (input1.hasEnchantments()) {
-            // Extracting
-            if (input2.getItem() == Items.BOOK) {
-                State state = extractEnchantments(config, input1);
-                if (state != null) {
-                    return state;
-                }
+        } else
+        // Extracting
+        if (input1.hasEnchantments() && input2.getItem() == Items.BOOK) {
+            State state = extractEnchantments(config, input1);
+            if (state != null) {
+                return state;
             }
-
-            // Scrubbing
-            else if (input2.getItem() == EnchantingReimagined.CURSER_SCRUBBER) {
-                State state = scrubCursesItem(config, input1, input2);
-                if (state != null) {
-                    return state;
-                }
-            } else {
-                resetValues();
-                return State.IncorrectSecondItem;
+        } else
+        // Scrubbing
+        if (input1.hasEnchantments() && input2.getItem() == EnchantingReimagined.CURSER_SCRUBBER) {
+            State state = scrubCursesItem(config, input1, input2);
+            if (state != null) {
+                return state;
             }
         }
         // Repairing
-        else if (input1.isDamaged()
-                && input1.getItem().canRepair(input1, input2)) {
+        else if (input1.isDamaged() && input1.getItem().canRepair(input1, input2)) {
             State state = repairItem(config, input1, input2);
             if (state != null) {
                 return state;
@@ -183,7 +175,10 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         }
         // Applying
         else if (input2.get(DataComponentTypes.STORED_ENCHANTMENTS) != null) {
-
+            State state = applyEnchantments(config, input1, input2);
+            if (state != null) {
+                return state;
+            }
         }
 
         if (playerInventory.player.isCreative()) {
@@ -228,6 +223,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
                 enchantmentComponent);
         blockInventory.setStack(OUTPUT1_ID, outputStack);
         xpCost = xpExtractionCost;
+        secondInputUsageCount = 1;
 
         return null;
     }
@@ -261,8 +257,6 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         outputComponentBuilder.remove(enchantment -> enchantment.isIn(EnchantmentTags.CURSE));
         ItemEnchantmentsComponent outputComponent = outputComponentBuilder.build();
 
-        System.out.println("SC");
-
         if (!outputComponent.isEmpty()) {
             outputStack.set(DataComponentTypes.ENCHANTMENTS, outputComponent);
         } else {
@@ -271,6 +265,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
 
         blockInventory.setStack(OUTPUT1_ID, outputStack);
         xpCost = xpScrubbingCost;
+        secondInputUsageCount = 1;
 
         return null;
     }
@@ -298,6 +293,66 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         blockInventory.setStack(OUTPUT1_ID, outputStack);
         xpCost = repairCost;
         secondInputUsageCount = repairAmount;
+
+        return null;
+    }
+
+    // Apply enchantments from enchanted book onto item
+    private State applyEnchantments(EnchantingReimaginedConfig config, ItemStack input1, ItemStack input2) {
+        if (!config.applying.allowApplying) {
+            resetValues();
+            return State.IncorrectSecondItem;
+        }
+
+        ItemStack outputStack = input1.copy();
+        ItemEnchantmentsComponent.Builder outputEnchantments = new ItemEnchantmentsComponent.Builder(
+                outputStack.getEnchantments());
+        ItemEnchantmentsComponent secondInputEnchantments = input2.get(DataComponentTypes.STORED_ENCHANTMENTS);
+
+        if (secondInputEnchantments == null) {
+            resetValues();
+            return State.IncorrectSecondItem;
+        }
+
+        int xpApplyingCost = 0;
+        for (RegistryEntry<Enchantment> enchantment : secondInputEnchantments.getEnchantments()) {
+            boolean continueOuter = false;
+            for (RegistryEntry<Enchantment> enchantment2 : outputStack.getEnchantments().getEnchantments()) {
+                // Cannot combine
+                if ((enchantment.value() != enchantment2.value()
+                        && (enchantment.value().exclusiveSet().contains(enchantment2)
+                                || enchantment2.value().exclusiveSet().contains(enchantment)))
+                        || !enchantment.value().isAcceptableItem(input1)) {
+                    continueOuter = true;
+                    break;
+                }
+            }
+
+            if (continueOuter) {
+                continue;
+            }
+
+            // Combine enchantment
+            int currentLevel = outputEnchantments.getLevel(enchantment);
+            int bookLevel = secondInputEnchantments.getLevel(enchantment);
+            int newLevel = Math.max(currentLevel, bookLevel);
+            if (currentLevel == bookLevel && currentLevel < enchantment.value().getMaxLevel()) {
+                newLevel += 1;
+            }
+            outputEnchantments.set(enchantment, newLevel);
+
+            // Calculate cost
+            if (newLevel > currentLevel) {
+                xpApplyingCost += config.applying.applyingCostPerLevel
+                        ? (newLevel - currentLevel) * config.applying.applyingCost
+                        : config.applying.applyingCost;
+            }
+        }
+
+        outputStack.set(DataComponentTypes.ENCHANTMENTS, outputEnchantments.build());
+        blockInventory.setStack(OUTPUT1_ID, outputStack);
+        xpCost = xpApplyingCost;
+        secondInputUsageCount = 1;
 
         return null;
     }
