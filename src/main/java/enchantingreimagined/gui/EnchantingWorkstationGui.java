@@ -5,6 +5,7 @@ import java.util.Set;
 import enchantingreimagined.EnchantingReimagined;
 import enchantingreimagined.EnchantingReimaginedConfig;
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
+import io.github.cottonmc.cotton.gui.widget.TooltipBuilder;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
 import io.github.cottonmc.cotton.gui.widget.WItemSlot;
 import io.github.cottonmc.cotton.gui.widget.WPlainPanel;
@@ -37,9 +38,8 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
     private static final int INVENTORY_SIZE = 4;
 
     private enum State {
-        None, Crafted, NotEnoughXp, HasCurse, AlreadyMax, HasNoCurse, OnlyOneEnchant, NonNewEnchantments, NoItem,
-        IncorrectSecondItem,
-        NotRepairable
+        None, Crafted, NoItem, IncorrectSecondItem, NotEnoughXp, HasCurse, AlreadyMax, HasNoCurse, OnlyOneEnchant,
+        NoNewEnchantments, NotRepairable
     };
 
     private static boolean hasCrafted = false;
@@ -48,6 +48,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
 
     private static WGridPanel gridPanel;
     private static WSprite errorSprite;
+    private static String errorTooltip;
     private static WText experienceText;
     private static WItemSlot outputSlot1;
     private static WItemSlot outputSlot2;
@@ -79,7 +80,16 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         WSprite arrowBackground = new WSprite(GuiHelper.ARROW_TEXTURE);
         gridPanel.add(arrowBackground, 4, 1, 2, 1);
 
-        errorSprite = new WSprite(GuiHelper.ERROR_TEXTURE);
+        errorSprite = new WSprite(GuiHelper.ERROR_TEXTURE) {
+            @Override
+            public void addTooltip(TooltipBuilder tooltip) {
+                super.addTooltip(tooltip);
+
+                if (errorTooltip != null) {
+                    tooltip.add(Text.translatable(errorTooltip));
+                }
+            }
+        };
 
         outputSlot1 = WItemSlot.of(blockInventory, OUTPUT1_ID).setInsertingAllowed(false)
                 .setOutputFilter(stack -> allowTakingOutput());
@@ -184,7 +194,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         }
 
         // Repairing
-        else if (input1.isDamaged() && input1.getItem().canRepair(input1, input2)) {
+        else if (input1.isDamageable() && input1.getItem().canRepair(input1, input2)) {
             State state = repairItem(config, input1, input2);
             if (state != null) {
                 return state;
@@ -197,6 +207,11 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
             if (state != null) {
                 return state;
             }
+        }
+
+        else {
+            resetValues();
+            return State.IncorrectSecondItem;
         }
 
         if (playerInventory.player.isCreative()) {
@@ -312,14 +327,21 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
             return State.IncorrectSecondItem;
         }
 
+        if (!input1.isDamaged()) {
+            resetValues();
+            return State.NotRepairable;
+        }
+
         int repairCost = config.repairing.consistentRepairPrice ? config.repairing.repairPrice
                 : config.repairing.repairPrice
                         + input1.getOrDefault(DataComponentTypes.REPAIR_COST, 0);
 
         ItemStack outputStack = input1.copy();
         int repairAmount = Math.min(input1.getDamage(), input1.getMaxDamage() / 4);
+        int materialUsage = 0;
+
         // Iteratively repair with each item in the second input slot
-        for (int i = 0; repairAmount > 0 && i < input2.getCount(); i++) {
+        for (materialUsage = 0; repairAmount > 0 && materialUsage < input2.getCount(); materialUsage++) {
             int newDamage = outputStack.getDamage() - repairAmount;
             outputStack.setDamage(newDamage);
             repairAmount = Math.min(outputStack.getDamage(), outputStack.getMaxDamage() / 4);
@@ -327,7 +349,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
 
         blockInventory.setStack(OUTPUT1_ID, outputStack);
         xpCost = repairCost;
-        secondInputUsageCount = repairAmount;
+        secondInputUsageCount = materialUsage;
 
         return null;
     }
@@ -409,7 +431,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         // No new enchantments added
         if (!addedEnchantment) {
             resetValues();
-            return State.NonNewEnchantments;
+            return State.NoNewEnchantments;
         }
 
         if (isBook) {
@@ -515,6 +537,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         blockInventory.setStack(OUTPUT2_ID, ItemStack.EMPTY);
         xpCost = 0;
         secondInputUsageCount = 0;
+        errorTooltip = null;
     }
 
     private void updateGui(State state) {
@@ -523,6 +546,32 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
 
         // Error cross
         if (state != State.None && state != State.Crafted) {
+            switch (state) {
+                case AlreadyMax:
+                    errorTooltip = "container.enchanting_reimagined.enchanting_workstation.error.already_max";
+                    break;
+                case HasCurse:
+                    errorTooltip = "container.enchanting_reimagined.enchanting_workstation.error.has_curse";
+                    break;
+                case HasNoCurse:
+                    errorTooltip = "container.enchanting_reimagined.enchanting_workstation.error.has_no_curse";
+                    break;
+                case NoNewEnchantments:
+                    errorTooltip = "container.enchanting_reimagined.enchanting_workstation.error.no_new_enchantments";
+                    break;
+                case NotEnoughXp:
+                    errorTooltip = "container.enchanting_reimagined.enchanting_workstation.error.not_enought_xp";
+                    break;
+                case NotRepairable:
+                    errorTooltip = "container.enchanting_reimagined.enchanting_workstation.error.not_repairable";
+                    break;
+                case OnlyOneEnchant:
+                    errorTooltip = "container.enchanting_reimagined.enchanting_workstation.error.only_one_enchant";
+                    break;
+                default:
+                    break;
+            }
+
             gridPanel.add(errorSprite, 4, 1, 2, 1);
         }
 
