@@ -22,6 +22,8 @@ public class EnchantingReimaginedConfig implements ConfigData {
     public CombiningConfig combining = new CombiningConfig();
     @ConfigEntry.Gui.CollapsibleObject
     public SplittingConfig splitting = new SplittingConfig();
+    @ConfigEntry.Gui.CollapsibleObject
+    public UpgradingConfig upgrading = new UpgradingConfig();
 
     public static class RepairConfig {
         @ConfigEntry.Gui.Tooltip
@@ -95,5 +97,16 @@ public class EnchantingReimaginedConfig implements ConfigData {
         @ConfigEntry.BoundedDiscrete(min = 0, max = 50)
         // Cost for splitting an enchanted book
         public int splittingCost = 0;
+    }
+
+    public static class UpgradingConfig {
+        @ConfigEntry.Gui.Tooltip
+        // If false disables the possibility to upgrade enchanted books in an enchanting
+        // workstation
+        public boolean allowUpgrading = true;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 3)
+        // Cost for upgrading an enchanted book one level
+        public int upgradingCost = 1;
     }
 }

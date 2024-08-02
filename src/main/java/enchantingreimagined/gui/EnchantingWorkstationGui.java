@@ -143,12 +143,15 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
 
             // Upgrading
             else if (input2.getItem() == EnchantingReimagined.ENCHANTMENT_DUST) {
-
+                State state = upgradeBook(config, input1, input2);
+                if (state != null) {
+                    return state;
+                }
             }
 
             // Scrubbing
             else if (input2.getItem() == EnchantingReimagined.CURSER_SCRUBBER) {
-                State state = scrubAwayCurses(config, input1, input2);
+                State state = scrubAwayCurses(config, input1);
                 if (state != null) {
                     return state;
                 }
@@ -170,7 +173,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
 
         // Scrubbing
         if (input1.hasEnchantments() && input2.getItem() == EnchantingReimagined.CURSER_SCRUBBER) {
-            State state = scrubAwayCurses(config, input1, input2);
+            State state = scrubAwayCurses(config, input1);
             if (state != null) {
                 return state;
             }
@@ -237,7 +240,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
     }
 
     // Scrub away curses from item or enchanted book
-    private State scrubAwayCurses(EnchantingReimaginedConfig config, ItemStack input1, ItemStack input2) {
+    private State scrubAwayCurses(EnchantingReimaginedConfig config, ItemStack input1) {
         if (!config.scrubbing.allowScrubbing) {
             resetValues();
             return State.IncorrectSecondItem;
@@ -252,16 +255,18 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         }
         Set<RegistryEntry<Enchantment>> enchantments = enchantmentComponent.getEnchantments();
         int xpScrubbingCost = 0;
+        boolean curseFound = false;
 
         // Calculate cost
         for (RegistryEntry<Enchantment> enchantment : enchantments) {
             if (enchantment.isIn(EnchantmentTags.CURSE)) {
+                curseFound = true;
                 xpScrubbingCost += config.scrubbing.scrubbingCost;
             }
         }
 
         // No curses
-        if (xpScrubbingCost == 0) {
+        if (!curseFound) {
             resetValues();
             return State.HasNoCurse;
         }
@@ -329,7 +334,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
 
         ItemStack outputStack = input1.copy();
         ItemEnchantmentsComponent.Builder outputEnchantments = new ItemEnchantmentsComponent.Builder(
-                outputStack.getEnchantments());
+                ItemEnchantmentsComponent.DEFAULT);
         ItemEnchantmentsComponent secondInputEnchantments = input2.get(DataComponentTypes.STORED_ENCHANTMENTS);
 
         if (secondInputEnchantments == null) {
@@ -338,14 +343,19 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         }
 
         int xpApplyingCost = 0;
+        boolean addedEnchantment = false;
+
         for (RegistryEntry<Enchantment> enchantment : secondInputEnchantments.getEnchantments()) {
+            if (!enchantment.value().isAcceptableItem(input1)) {
+                continue;
+            }
+
             boolean continueOuter = false;
             for (RegistryEntry<Enchantment> enchantment2 : outputStack.getEnchantments().getEnchantments()) {
                 // Cannot combine
-                if ((enchantment.value() != enchantment2.value()
+                if (enchantment.value() != enchantment2.value()
                         && (enchantment.value().exclusiveSet().contains(enchantment2)
-                                || enchantment2.value().exclusiveSet().contains(enchantment)))
-                        || !enchantment.value().isAcceptableItem(input1)) {
+                                || enchantment2.value().exclusiveSet().contains(enchantment))) {
                     continueOuter = true;
                     break;
                 }
@@ -366,6 +376,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
 
             // Calculate cost
             if (newLevel > currentLevel) {
+                addedEnchantment = true;
                 xpApplyingCost += config.applying.applyingCostPerLevel
                         ? (newLevel - currentLevel) * config.applying.applyingCost
                         : config.applying.applyingCost;
@@ -373,7 +384,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         }
 
         // No new enchantments added
-        if (xpApplyingCost == 0) {
+        if (!addedEnchantment) {
             resetValues();
             return State.NonNewEnchantments;
         }
@@ -423,6 +434,45 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         blockInventory.setStack(OUTPUT2_ID, outputStack2);
         xpCost = config.splitting.splittingCost;
         secondInputUsageCount = 1;
+
+        return null;
+    }
+
+    // Increase levels of enchanted book
+    private State upgradeBook(EnchantingReimaginedConfig config, ItemStack input1, ItemStack input2) {
+        if (!config.upgrading.allowUpgrading) {
+            resetValues();
+            return State.IncorrectSecondItem;
+        }
+
+        int xpUpgradingCost = 0;
+        int dustUsage = 0;
+
+        ItemStack outputStack = input1.copy();
+        ItemEnchantmentsComponent.Builder outputEnchantments = new ItemEnchantmentsComponent.Builder(
+                ItemEnchantmentsComponent.DEFAULT);
+        ItemEnchantmentsComponent secondInputEnchantments = input1.get(DataComponentTypes.STORED_ENCHANTMENTS);
+
+        for (RegistryEntry<Enchantment> enchantment : secondInputEnchantments.getEnchantments()) {
+            int level = secondInputEnchantments.getLevel(enchantment);
+            while (dustUsage < input2.getCount() && level < enchantment.value().getMaxLevel()) {
+                level += 1;
+                dustUsage += 1;
+                xpUpgradingCost += config.upgrading.upgradingCost;
+            }
+
+            outputEnchantments.add(enchantment, level);
+        }
+
+        if (dustUsage == 0) {
+            resetValues();
+            return State.AlreadyMax;
+        }
+
+        outputStack.set(DataComponentTypes.STORED_ENCHANTMENTS, outputEnchantments.build());
+        blockInventory.setStack(OUTPUT1_ID, outputStack);
+        xpCost = xpUpgradingCost;
+        secondInputUsageCount = dustUsage;
 
         return null;
     }
