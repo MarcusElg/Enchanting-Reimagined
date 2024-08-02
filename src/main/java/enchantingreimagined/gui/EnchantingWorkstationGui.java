@@ -142,7 +142,8 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
             }
 
             // Upgrading
-            else if (input2.getItem() == EnchantingReimagined.ENCHANTMENT_DUST) {
+            else if (input2.getItem() == EnchantingReimagined.ENCHANTMENT_DUST
+                    || input2.getItem() == EnchantingReimagined.ADVANCED_ENCHANTMENT_DUST) {
                 State state = upgradeBook(config, input1, input2);
                 if (state != null) {
                     return state;
@@ -455,7 +456,12 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
 
         for (RegistryEntry<Enchantment> enchantment : secondInputEnchantments.getEnchantments()) {
             int level = secondInputEnchantments.getLevel(enchantment);
-            while (dustUsage < input2.getCount() && level < enchantment.value().getMaxLevel()) {
+            int maxLevel = enchantment.value().getMaxLevel();
+            if (maxLevel > 1 && input2.getItem() == EnchantingReimagined.ADVANCED_ENCHANTMENT_DUST) {
+                maxLevel += config.upgrading.advancedDustExtraLevelCount;
+            }
+
+            while (dustUsage < input2.getCount() && level < maxLevel) {
                 level += 1;
                 dustUsage += 1;
                 xpUpgradingCost += config.upgrading.upgradingCost;

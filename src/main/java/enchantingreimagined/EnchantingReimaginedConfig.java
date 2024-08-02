@@ -108,5 +108,9 @@ public class EnchantingReimaginedConfig implements ConfigData {
         @ConfigEntry.BoundedDiscrete(min = 0, max = 3)
         // Cost for upgrading an enchanted book one level
         public int upgradingCost = 1;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 3)
+        // Amount of extra levels that advanced enchanting dust can upgrade
+        public int advancedDustExtraLevelCount = 1;
     }
 }

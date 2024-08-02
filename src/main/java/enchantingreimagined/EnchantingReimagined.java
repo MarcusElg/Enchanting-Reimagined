@@ -1,5 +1,6 @@
 package enchantingreimagined;
 
+import java.util.Arrays;
 import enchantingreimagined.gui.EnchantingWorkstationGui;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
@@ -22,6 +23,7 @@ import net.minecraft.util.Identifier;
 
 public class EnchantingReimagined implements ModInitializer {
 	public static TooltippedItem ENCHANTMENT_DUST;
+	public static TooltippedItem ADVANCED_ENCHANTMENT_DUST;
 	public static TooltippedItem CURSER_SCRUBBER;
 
 	public static EnchantingWorkstationBlock ENCHANTING_WORKSTATION;
@@ -53,9 +55,15 @@ public class EnchantingReimagined implements ModInitializer {
 
 	private void registerItems() {
 		ENCHANTMENT_DUST = Registry.register(Registries.ITEM, get_id("enchantment_dust"),
-				new TooltippedItem(new Item.Settings(), "item.enchanting_reimagined.enchantment_dust.tooltip"));
+				new TooltippedItem(new Item.Settings(),
+						Arrays.asList("item.enchanting_reimagined.enchantment_dust.tooltip")));
+		ADVANCED_ENCHANTMENT_DUST = Registry.register(Registries.ITEM, get_id("advanced_enchantment_dust"),
+				new TooltippedItem(new Item.Settings(),
+						Arrays.asList("item.enchanting_reimagined.advanced_enchantment_dust.tooltip",
+								"item.enchanting_reimagined.advanced_enchantment_dust.tooltip.2")));
 		CURSER_SCRUBBER = Registry.register(Registries.ITEM, get_id("curse_scrubber"),
-				new TooltippedItem(new Item.Settings(), "item.enchanting_reimagined.curse_scrubber.tooltip"));
+				new TooltippedItem(new Item.Settings(),
+						Arrays.asList("item.enchanting_reimagined.curse_scrubber.tooltip")));
 	}
 
 	private void registerBlocks() {
@@ -85,6 +93,7 @@ public class EnchantingReimagined implements ModInitializer {
 						.entries((context, entries) -> {
 							entries.add(new ItemStack(ENCHANTING_WORKSTATION));
 							entries.add(new ItemStack(ENCHANTMENT_DUST));
+							entries.add(new ItemStack(ADVANCED_ENCHANTMENT_DUST));
 							entries.add(new ItemStack(CURSER_SCRUBBER));
 						})
 						.build());

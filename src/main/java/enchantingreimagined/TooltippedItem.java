@@ -9,15 +9,17 @@ import net.minecraft.text.Text;
 
 public class TooltippedItem extends Item {
 
-    String tooltip_key;
+    List<String> tooltip_keys;
 
-    public TooltippedItem(Settings settings, String tooltip_key) {
+    public TooltippedItem(Settings settings, List<String> tooltip_keys) {
         super(settings);
-        this.tooltip_key = tooltip_key;
+        this.tooltip_keys = tooltip_keys;
     }
 
     @Override
     public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
-        tooltip.add(Text.translatable(tooltip_key));
-	}
+        for (String tooltip_key : tooltip_keys) {
+            tooltip.add(Text.translatable(tooltip_key));
+        }
+    }
 }

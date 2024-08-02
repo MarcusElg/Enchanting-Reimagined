@@ -41,3 +41,4 @@ replay_*.log
 
 # krita
 *.png~
+*.png-autosave.kra
