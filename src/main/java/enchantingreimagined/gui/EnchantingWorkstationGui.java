@@ -130,7 +130,10 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         if (input1.getItem() == Items.ENCHANTED_BOOK) {
             /// Combining
             if (input2.getItem() == Items.ENCHANTED_BOOK) {
-
+                State state = applyEnchantments(config, input1, input2);
+                if (state != null) {
+                    return state;
+                }
             }
 
             // Splitting
@@ -249,11 +252,14 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
 
         ItemStack outputStack = input1.copy();
         ItemEnchantmentsComponent enchantmentComponent;
-        if (input1.getItem() == Items.ENCHANTED_BOOK) {
+        boolean isBook = input1.getItem() == Items.ENCHANTED_BOOK;
+
+        if (isBook) {
             enchantmentComponent = outputStack.get(DataComponentTypes.STORED_ENCHANTMENTS);
         } else {
             enchantmentComponent = outputStack.getEnchantments();
         }
+
         Set<RegistryEntry<Enchantment>> enchantments = enchantmentComponent.getEnchantments();
         int xpScrubbingCost = 0;
         boolean curseFound = false;
@@ -278,7 +284,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         outputComponentBuilder.remove(enchantment -> enchantment.isIn(EnchantmentTags.CURSE));
         ItemEnchantmentsComponent outputComponent = outputComponentBuilder.build();
 
-        if (input1.getItem() == Items.ENCHANTED_BOOK) {
+        if (isBook) {
             if (!outputComponent.isEmpty()) {
                 outputStack.set(DataComponentTypes.STORED_ENCHANTMENTS, outputComponent);
             } else {
@@ -326,7 +332,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         return null;
     }
 
-    // Apply enchantments from enchanted book onto item
+    // Apply enchantments from enchanted book onto item or book
     private State applyEnchantments(EnchantingReimaginedConfig config, ItemStack input1, ItemStack input2) {
         if (!config.applying.allowApplying) {
             resetValues();
@@ -334,8 +340,17 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         }
 
         ItemStack outputStack = input1.copy();
+        ItemEnchantmentsComponent enchantmentComponent;
+        boolean isBook = input1.getItem() == Items.ENCHANTED_BOOK;
+
+        if (isBook) {
+            enchantmentComponent = outputStack.get(DataComponentTypes.STORED_ENCHANTMENTS);
+        } else {
+            enchantmentComponent = outputStack.getEnchantments();
+        }
+
         ItemEnchantmentsComponent.Builder outputEnchantments = new ItemEnchantmentsComponent.Builder(
-                ItemEnchantmentsComponent.DEFAULT);
+                enchantmentComponent);
         ItemEnchantmentsComponent secondInputEnchantments = input2.get(DataComponentTypes.STORED_ENCHANTMENTS);
 
         if (secondInputEnchantments == null) {
@@ -347,12 +362,12 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         boolean addedEnchantment = false;
 
         for (RegistryEntry<Enchantment> enchantment : secondInputEnchantments.getEnchantments()) {
-            if (!enchantment.value().isAcceptableItem(input1)) {
+            if (!isBook && !enchantment.value().isAcceptableItem(input1)) {
                 continue;
             }
 
             boolean continueOuter = false;
-            for (RegistryEntry<Enchantment> enchantment2 : outputStack.getEnchantments().getEnchantments()) {
+            for (RegistryEntry<Enchantment> enchantment2 : outputEnchantments.getEnchantments()) {
                 // Cannot combine
                 if (enchantment.value() != enchantment2.value()
                         && (enchantment.value().exclusiveSet().contains(enchantment2)
@@ -378,10 +393,17 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
             // Calculate cost
             if (newLevel > currentLevel) {
                 addedEnchantment = true;
-                xpApplyingCost += config.applying.applyingCostPerLevel
-                        ? (newLevel - currentLevel) * config.applying.applyingCost
-                        : config.applying.applyingCost;
+
+                if (!isBook) {
+                    xpApplyingCost += config.applying.applyingCostPerLevel
+                            ? (newLevel - currentLevel) * config.applying.applyingCost
+                            : config.applying.applyingCost;
+                }
             }
+        }
+
+        if (isBook) {
+            xpApplyingCost = config.combining.combiningCost;
         }
 
         // No new enchantments added
@@ -390,7 +412,12 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
             return State.NonNewEnchantments;
         }
 
-        outputStack.set(DataComponentTypes.ENCHANTMENTS, outputEnchantments.build());
+        if (isBook) {
+            outputStack.set(DataComponentTypes.STORED_ENCHANTMENTS, outputEnchantments.build());
+        } else {
+            outputStack.set(DataComponentTypes.ENCHANTMENTS, outputEnchantments.build());
+        }
+
         blockInventory.setStack(OUTPUT1_ID, outputStack);
         xpCost = xpApplyingCost;
         secondInputUsageCount = 1;

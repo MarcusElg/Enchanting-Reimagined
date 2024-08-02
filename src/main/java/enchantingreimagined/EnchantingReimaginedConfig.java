@@ -73,7 +73,7 @@ public class EnchantingReimaginedConfig implements ConfigData {
         // Cost for applying enchantments to an item
         public int applyingCost = 1;
         @ConfigEntry.Gui.Tooltip
-        // If true applyinh costs are calculated per level instead of per enchantment
+        // If true applying costs are calculated per level instead of per enchantment
         public boolean applyingCostPerLevel = true;
     }
 
