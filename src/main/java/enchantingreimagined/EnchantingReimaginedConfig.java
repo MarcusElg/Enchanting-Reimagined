@@ -6,7 +6,6 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
 @Config(name = "enchanting_reimagined")
 public class EnchantingReimaginedConfig implements ConfigData {
-    @ConfigEntry.Gui.Tooltip
     // If true removes enchanting table recipe
     public boolean removeEnchantingTableRecipe = true;
 
@@ -35,7 +34,7 @@ public class EnchantingReimaginedConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 0, max = 50)
         // Sets repair price
-        public int repairPrice = 1;
+        public int repairPrice = 2;
     }
 
     public static class ExtractionConfig {
