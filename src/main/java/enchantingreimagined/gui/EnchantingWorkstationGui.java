@@ -45,6 +45,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
     private static boolean hasCrafted = false;
     private static int xpCost = 0;
     private static int secondInputUsageCount = 0;
+    private static int outputSlotsUsed = 0;
 
     private static WGridPanel gridPanel;
     private static WSprite errorSprite;
@@ -58,8 +59,8 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
                 getBlockInventory(context, INVENTORY_SIZE),
                 getBlockPropertyDelegate(context));
 
+        resetValues();
         hasCrafted = false;
-        xpCost = 0;
 
         WPlainPanel root = new WPlainPanel();
         root.setInsets(Insets.ROOT_PANEL);
@@ -111,13 +112,17 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
     }
 
     private boolean allowTakingOutput() {
-        return playerInventory.player.experienceLevel >= xpCost
-                && blockInventory.getStack(INPUT2_ID).getCount() >= secondInputUsageCount;
+        return hasCrafted || (playerInventory.player.experienceLevel >= xpCost
+                && blockInventory.getStack(INPUT2_ID).getCount() >= secondInputUsageCount);
     }
 
     private State calculateOutput() {
         if (hasCrafted) {
-            return State.Crafted;
+            if (blockInventory.getStack(OUTPUT1_ID).isEmpty() && blockInventory.getStack(OUTPUT2_ID).isEmpty()) {
+                hasCrafted = false;
+            } else {
+                return State.Crafted;
+            }
         }
 
         ItemStack input1 = blockInventory.getStack(INPUT1_ID);
@@ -254,6 +259,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         blockInventory.setStack(OUTPUT1_ID, outputStack);
         xpCost = xpExtractionCost;
         secondInputUsageCount = 1;
+        outputSlotsUsed = 1;
 
         return null;
     }
@@ -316,6 +322,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         blockInventory.setStack(OUTPUT1_ID, outputStack);
         xpCost = xpScrubbingCost;
         secondInputUsageCount = 1;
+        outputSlotsUsed = 1;
 
         return null;
     }
@@ -338,7 +345,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
 
         ItemStack outputStack = input1.copy();
         int repairAmount = Math.min(input1.getDamage(), input1.getMaxDamage() / 4);
-        int materialUsage = 0;
+        int materialUsage;
 
         // Iteratively repair with each item in the second input slot
         for (materialUsage = 0; repairAmount > 0 && materialUsage < input2.getCount(); materialUsage++) {
@@ -350,6 +357,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         blockInventory.setStack(OUTPUT1_ID, outputStack);
         xpCost = repairCost;
         secondInputUsageCount = materialUsage;
+        outputSlotsUsed = 1;
 
         return null;
     }
@@ -443,6 +451,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         blockInventory.setStack(OUTPUT1_ID, outputStack);
         xpCost = xpApplyingCost;
         secondInputUsageCount = 1;
+        outputSlotsUsed = 1;
 
         return null;
     }
@@ -484,6 +493,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         blockInventory.setStack(OUTPUT2_ID, outputStack2);
         xpCost = config.splitting.splittingCost;
         secondInputUsageCount = 1;
+        outputSlotsUsed = 2;
 
         return null;
     }
@@ -528,15 +538,20 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         blockInventory.setStack(OUTPUT1_ID, outputStack);
         xpCost = xpUpgradingCost;
         secondInputUsageCount = dustUsage;
+        outputSlotsUsed = 1;
 
         return null;
     }
 
     private void resetValues() {
-        blockInventory.setStack(OUTPUT1_ID, ItemStack.EMPTY);
-        blockInventory.setStack(OUTPUT2_ID, ItemStack.EMPTY);
+        if (!hasCrafted) {
+            blockInventory.setStack(OUTPUT1_ID, ItemStack.EMPTY);
+            blockInventory.setStack(OUTPUT2_ID, ItemStack.EMPTY);
+        }
+
         xpCost = 0;
         secondInputUsageCount = 0;
+        outputSlotsUsed = 0;
         errorTooltip = null;
     }
 
@@ -547,29 +562,22 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         // Error cross
         if (state != State.None && state != State.Crafted) {
             switch (state) {
-                case AlreadyMax:
+                case AlreadyMax ->
                     errorTooltip = "container.enchanting_reimagined.enchanting_workstation.error.already_max";
-                    break;
-                case HasCurse:
+                case HasCurse ->
                     errorTooltip = "container.enchanting_reimagined.enchanting_workstation.error.has_curse";
-                    break;
-                case HasNoCurse:
+                case HasNoCurse ->
                     errorTooltip = "container.enchanting_reimagined.enchanting_workstation.error.has_no_curse";
-                    break;
-                case NoNewEnchantments:
+                case NoNewEnchantments ->
                     errorTooltip = "container.enchanting_reimagined.enchanting_workstation.error.no_new_enchantments";
-                    break;
-                case NotEnoughXp:
+                case NotEnoughXp ->
                     errorTooltip = "container.enchanting_reimagined.enchanting_workstation.error.not_enought_xp";
-                    break;
-                case NotRepairable:
+                case NotRepairable ->
                     errorTooltip = "container.enchanting_reimagined.enchanting_workstation.error.not_repairable";
-                    break;
-                case OnlyOneEnchant:
+                case OnlyOneEnchant ->
                     errorTooltip = "container.enchanting_reimagined.enchanting_workstation.error.only_one_enchant";
-                    break;
-                default:
-                    break;
+                default -> {
+                }
             }
 
             gridPanel.add(errorSprite, 4, 1, 2, 1);
@@ -590,11 +598,30 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
     public void onSlotClick(int slotIndex, int button, SlotActionType actionType, PlayerEntity player) {
         super.onSlotClick(slotIndex, button, actionType, player);
 
-        // Taken from output
-        // System.out.println("CLICK" + slots.get(slotIndex).getStack() +
-        // getCursorStack());
-        // if ((slotIndex == slots.size() - 1 || slotIndex == slots.size() - 2) &&
-        // !getCursorStack().ise
+        // Detect taking from output
+        if (outputSlotsUsed > 0 && (slotIndex == slots.size() - 1 || slotIndex == slots.size() - 2)) {
+            int currentOutputSlotsUsed = 0;
+            if (!blockInventory.getStack(OUTPUT1_ID).isEmpty()) {
+                currentOutputSlotsUsed += 1;
+            }
+            if (!blockInventory.getStack(OUTPUT2_ID).isEmpty()) {
+                currentOutputSlotsUsed += 1;
+            }
+
+            if (currentOutputSlotsUsed < outputSlotsUsed) {
+                blockInventory.removeStack(INPUT1_ID, 1);
+                blockInventory.removeStack(INPUT2_ID, secondInputUsageCount);
+                player.addExperienceLevels(-xpCost);
+                hasCrafted = true;
+
+                // Let detection be done on both client and server
+                if (!world.isClient) {
+                    resetValues();
+                }
+
+                return;
+            }
+        }
 
         updateGui(calculateOutput());
     }
