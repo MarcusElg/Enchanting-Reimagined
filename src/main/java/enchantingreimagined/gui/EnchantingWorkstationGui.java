@@ -26,6 +26,8 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
 public class EnchantingWorkstationGui extends SyncedGuiDescription {
@@ -47,6 +49,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
     private static int secondInputUsageCount = 0;
     private static int outputSlotsUsed = 0;
 
+    private ScreenHandlerContext context;
     private static WGridPanel gridPanel;
     private static WSprite errorSprite;
     private static String errorTooltip;
@@ -59,6 +62,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
                 getBlockInventory(context, INVENTORY_SIZE),
                 getBlockPropertyDelegate(context));
 
+        this.context = context;
         resetValues();
         hasCrafted = false;
 
@@ -612,6 +616,11 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
                 blockInventory.removeStack(INPUT1_ID, 1);
                 blockInventory.removeStack(INPUT2_ID, secondInputUsageCount);
                 player.addExperienceLevels(-xpCost);
+                player.incrementStat(EnchantingReimagined.CRAFT_IN_ENCHANTING_WORKSTATION);
+                context.run((world, pos) -> {
+                    world.playSound(null, pos, SoundEvents.BLOCK_ANVIL_USE, SoundCategory.BLOCKS, 1.0f,
+                            world.getRandom().nextFloat() * 0.3f + 0.7f);
+                });
                 hasCrafted = true;
 
                 // Let detection be done on both client and server

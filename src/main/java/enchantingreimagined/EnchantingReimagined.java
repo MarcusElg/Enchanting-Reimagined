@@ -39,6 +39,8 @@ public class EnchantingReimagined implements ModInitializer {
 
 	public static final Identifier INTERACT_WITH_ENCHANTING_WORKSTATION = get_id(
 			"interact_with_enchanting_workstation");
+	public static final Identifier CRAFT_IN_ENCHANTING_WORKSTATION = get_id(
+			"craft_in_enchanting_workstation");
 
 	public static Identifier get_id(String id) {
 		return Identifier.of("enchanting_reimagined", id);
@@ -108,7 +110,10 @@ public class EnchantingReimagined implements ModInitializer {
 	private void registerStats() {
 		Registry.register(Registries.CUSTOM_STAT, INTERACT_WITH_ENCHANTING_WORKSTATION,
 				INTERACT_WITH_ENCHANTING_WORKSTATION);
+		Registry.register(Registries.CUSTOM_STAT, CRAFT_IN_ENCHANTING_WORKSTATION,
+				CRAFT_IN_ENCHANTING_WORKSTATION);
 		Stats.CUSTOM.getOrCreateStat(INTERACT_WITH_ENCHANTING_WORKSTATION, StatFormatter.DEFAULT);
+		Stats.CUSTOM.getOrCreateStat(CRAFT_IN_ENCHANTING_WORKSTATION, StatFormatter.DEFAULT);
 	}
 
 	private void removeRecipes() {

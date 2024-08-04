@@ -10,6 +10,7 @@
     "container.enchanting_reimagined.enchanting_workstation.error.not_repairable": "Can not repair item",
     "container.enchanting_reimagined.enchanting_workstation.error.only_one_enchant": "Enchanted book cannot be split",
     "stat.enchanting_reimagined.interact_with_enchanting_workstation": "Interactions with Enchanting Workstation",
+    "stat.enchanting_reimagined.craft_in_enchanting_workstation": "Items Crafted with Enchanting Workstation",
     "item.enchanting_reimagined.enchantment_dust": "Enchantment Dust",
     "item.enchanting_reimagined.enchantment_dust.tooltip": "Used in an enchantment workstation for upgrading enchanted books",
     "item.enchanting_reimagined.advanced_enchantment_dust": "Advanced Enchantment Dust",
