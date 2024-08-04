@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "enchanting_reimagined",
-	"version": "${version}",
+	"version": "${mod_version}",
 	"name": "Enchanting Reimagined",
 	"description": "Adds a new workstation for upgrading, applying, splitting books and more",
 	"authors": [
@@ -23,13 +23,6 @@
 			"enchantingreimagined.EnchantingReimaginedModMenuIntegration"
 		]
 	},
-	"mixins": [
-		"enchantingreimagined.mixins.json",
-		{
-			"config": "enchantingreimagined.client.mixins.json",
-			"environment": "client"
-		}
-	],
 	"depends": {
 		"java": ">=21"
 	},
