@@ -1,16 +1,21 @@
 package enchantingreimagined;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+
 import enchantingreimagined.gui.EnchantingWorkstationGui;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.RecipeManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
@@ -47,6 +52,7 @@ public class EnchantingReimagined implements ModInitializer {
 		registerGuis();
 		registerItemGroup();
 		registerStats();
+		removeRecipes();
 	}
 
 	private void registerConfig() {
@@ -103,5 +109,27 @@ public class EnchantingReimagined implements ModInitializer {
 		Registry.register(Registries.CUSTOM_STAT, INTERACT_WITH_ENCHANTING_WORKSTATION,
 				INTERACT_WITH_ENCHANTING_WORKSTATION);
 		Stats.CUSTOM.getOrCreateStat(INTERACT_WITH_ENCHANTING_WORKSTATION, StatFormatter.DEFAULT);
+	}
+
+	private void removeRecipes() {
+		EnchantingReimaginedConfig config = AutoConfig.getConfigHolder(EnchantingReimaginedConfig.class)
+				.getConfig();
+		if (!config.removeEnchantingTableRecipe) {
+			return;
+		}
+
+		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+			final RecipeManager recipeManager = server.getRecipeManager();
+			ArrayList<RecipeEntry<?>> newRecipes = new ArrayList<RecipeEntry<?>>();
+
+			for (RecipeEntry<?> recipe : recipeManager.values()) {
+				// Remove recipe by not adding it to the new list
+				if (!recipe.id().equals(Identifier.ofVanilla("enchanting_table"))) {
+					newRecipes.add(recipe);
+				}
+			}
+
+			recipeManager.setRecipes(newRecipes);
+		});
 	}
 }
