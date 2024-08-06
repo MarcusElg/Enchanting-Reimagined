@@ -10,6 +10,8 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.block.Block;
+import net.minecraft.block.MapColor;
+import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -21,6 +23,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.stat.StatFormatter;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
@@ -75,7 +78,9 @@ public class EnchantingReimagined implements ModInitializer {
 	}
 
 	private void registerBlocks() {
-		ENCHANTING_WORKSTATION = new EnchantingWorkstationBlock(Block.Settings.create());
+		ENCHANTING_WORKSTATION = new EnchantingWorkstationBlock(
+				Block.Settings.create().mapColor(MapColor.DEEPSLATE_GRAY)
+						.instrument(NoteBlockInstrument.BASS).strength(2.5F).sounds(BlockSoundGroup.WOOD).burnable());
 		registerBlock(ENCHANTING_WORKSTATION, "enchanting_workstation");
 	}
 
