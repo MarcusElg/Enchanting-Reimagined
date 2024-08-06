@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "enchanting_reimagined",
-	"version": "${mod_version}",
+	"version": "${version}",
 	"name": "Enchanting Reimagined",
 	"description": "Adds a new workstation for upgrading, applying, splitting books and more",
 	"authors": [
@@ -24,7 +24,10 @@
 		]
 	},
 	"depends": {
-		"java": ">=21"
+		"fabricloader": "*",
+		"fabric-api": "*",
+		"cloth-config": "*",
+		"lithostiched": "*"
 	},
 	"license": "MIT"
 }

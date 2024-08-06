@@ -1,0 +1,15 @@
+{
+    "type": "lithostitched:add_template_pool_elements",
+    "template_pool": "minecraft:village/desert/houses",
+    "elements": [
+        {
+            "weight": 2,
+            "element": {
+                "element_type": "minecraft:legacy_single_pool_element",
+                "projection": "rigid",
+                "location": "enchanting_reimagined:village_desert_enchantment_house",
+                "processors": "minecraft:empty"
+            }
+        }
+    ]
+}

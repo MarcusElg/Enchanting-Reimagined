@@ -125,7 +125,7 @@ public class EnchantingReimagined implements ModInitializer {
 
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
 			final RecipeManager recipeManager = server.getRecipeManager();
-			ArrayList<RecipeEntry<?>> newRecipes = new ArrayList<RecipeEntry<?>>();
+			ArrayList<RecipeEntry<?>> newRecipes = new ArrayList<>();
 
 			for (RecipeEntry<?> recipe : recipeManager.values()) {
 				// Remove recipe by not adding it to the new list
