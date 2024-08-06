@@ -8,7 +8,7 @@
             "entries": [
                 {
                     "type": "minecraft:item",
-                    "name": "enchanting_reimagined:enchanting_dust",
+                    "name": "enchanting_reimagined:enchantment_dust",
                     "weight": 10
                 },
                 {
@@ -28,7 +28,7 @@
                 },
                 {
                     "type": "minecraft:item",
-                    "name": "minecraft:enchanted_book",
+                    "name": "minecraft:book",
                     "weight": 5,
                     "functions": [
                         {

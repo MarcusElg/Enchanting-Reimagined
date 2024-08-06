@@ -1,14 +1,14 @@
 {
     "type": "lithostitched:add_template_pool_elements",
-    "template_pool": "minecraft:village/taiga/houses",
+    "template_pool": "minecraft:village/desert/houses",
     "elements": [
         {
-            "weight": 2,
+            "weight": 4,
             "element": {
                 "element_type": "minecraft:legacy_single_pool_element",
                 "projection": "rigid",
-                "location": "enchanting_reimagined:village_taiga_enchantment_house",
-                "processors": "minecraft:mossify_10_percent"
+                "location": "enchanting_reimagined:village/houses/desert_enchantment_house",
+                "processors": "minecraft:empty"
             }
         }
     ]

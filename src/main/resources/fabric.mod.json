@@ -27,7 +27,7 @@
 		"fabricloader": "*",
 		"fabric-api": "*",
 		"cloth-config": "*",
-		"lithostiched": "*"
+		"lithostitched": "*"
 	},
 	"license": "MIT"
 }
