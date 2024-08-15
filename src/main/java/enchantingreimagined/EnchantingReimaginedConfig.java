@@ -7,7 +7,7 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 @Config(name = "enchanting_reimagined")
 public class EnchantingReimaginedConfig implements ConfigData {
     // If true removes enchanting table recipe
-    public boolean removeEnchantingTableRecipe = true;
+    public boolean removeEnchantingTableRecipe = false;
 
     @ConfigEntry.Gui.CollapsibleObject
     public RepairConfig repairing = new RepairConfig();
