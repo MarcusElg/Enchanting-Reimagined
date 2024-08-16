@@ -121,11 +121,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
 
     private State calculateOutput() {
         if (hasCrafted) {
-            if (blockInventory.getStack(OUTPUT1_ID).isEmpty() && blockInventory.getStack(OUTPUT2_ID).isEmpty()) {
-                hasCrafted = false;
-            } else {
-                return State.Crafted;
-            }
+            return State.Crafted;
         }
 
         ItemStack input1 = blockInventory.getStack(INPUT1_ID);
@@ -601,7 +597,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
     public void onSlotClick(int slotIndex, int button, SlotActionType actionType, PlayerEntity player) {
         super.onSlotClick(slotIndex, button, actionType, player);
 
-        // Detect taking from output
+        // Detect taking first item from output
         if (outputSlotsUsed > 0
                 && (slotIndex == outputSlot1.getPeerStartId() || slotIndex == outputSlot2.getPeerStartId())) {
             int currentOutputSlotsUsed = 0;
@@ -627,8 +623,17 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
                 if (!world.isClient) {
                     resetValues();
                 }
+            }
+        }
 
-                return;
+        // Detect all output items taken
+        if (hasCrafted) {
+            if (blockInventory.getStack(OUTPUT1_ID).isEmpty() && blockInventory.getStack(OUTPUT2_ID).isEmpty()) {
+                if (!world.isClient) {
+                    hasCrafted = false;
+                } else {
+                    return;
+                }
             }
         }
 
