@@ -105,9 +105,8 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         gridPanel.add(outputSlot2, 7, 1);
 
         experienceText = new WText(
-                Text.translatable(""), 0);
-        experienceText.setVerticalAlignment(VerticalAlignment.CENTER);
-        experienceText.setHorizontalAlignment(HorizontalAlignment.RIGHT);
+                Text.translatable(""), 0).setVerticalAlignment(VerticalAlignment.CENTER)
+                .setHorizontalAlignment(HorizontalAlignment.RIGHT).setDrawShadows(true);
 
         root.add(this.createPlayerInventoryPanel(), 0, GuiHelper.INVENTORY_Y_OFFSET);
 
@@ -603,7 +602,8 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         super.onSlotClick(slotIndex, button, actionType, player);
 
         // Detect taking from output
-        if (outputSlotsUsed > 0 && (slotIndex == slots.size() - 1 || slotIndex == slots.size() - 2)) {
+        if (outputSlotsUsed > 0
+                && (slotIndex == outputSlot1.getPeerStartId() || slotIndex == outputSlot2.getPeerStartId())) {
             int currentOutputSlotsUsed = 0;
             if (!blockInventory.getStack(OUTPUT1_ID).isEmpty()) {
                 currentOutputSlotsUsed += 1;
@@ -617,9 +617,9 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
                 blockInventory.removeStack(INPUT2_ID, secondInputUsageCount);
                 player.addExperienceLevels(-xpCost);
                 player.incrementStat(EnchantingReimagined.CRAFT_IN_ENCHANTING_WORKSTATION);
-                context.run((world, pos) -> {
-                    world.playSound(null, pos, SoundEvents.BLOCK_ANVIL_USE, SoundCategory.BLOCKS, 1.0f,
-                            world.getRandom().nextFloat() * 0.3f + 0.7f);
+                context.run((contextWorld, pos) -> {
+                    contextWorld.playSound(null, pos, SoundEvents.BLOCK_ANVIL_USE, SoundCategory.BLOCKS, 1.0f,
+                            contextWorld.getRandom().nextFloat() * 0.3f + 0.7f);
                 });
                 hasCrafted = true;
 
