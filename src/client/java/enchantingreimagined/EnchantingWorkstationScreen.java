@@ -1,5 +1,6 @@
-package enchantingreimagined.gui;
+package enchantingreimagined;
 
+import enchantingreimagined.gui.EnchantingWorkstationGui;
 import io.github.cottonmc.cotton.gui.client.CottonInventoryScreen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;

@@ -49,7 +49,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
     private static int secondInputUsageCount = 0;
     private static int outputSlotsUsed = 0;
 
-    private ScreenHandlerContext context;
+    private final ScreenHandlerContext context;
     private static WGridPanel gridPanel;
     private static WSprite errorSprite;
     private static String errorTooltip;

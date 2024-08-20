@@ -1,7 +1,6 @@
 package enchantingreimagined;
 
 import enchantingreimagined.gui.EnchantingWorkstationGui;
-import enchantingreimagined.gui.EnchantingWorkstationScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 
