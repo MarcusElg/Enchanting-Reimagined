@@ -252,14 +252,24 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
                     : config.extraction.extractionCost;
         }
 
-        ItemStack outputStack = new ItemStack(Items.ENCHANTED_BOOK);
-        outputStack.set(DataComponentTypes.STORED_ENCHANTMENTS,
+        boolean consumeItem = config.extraction.consumeItem;
+
+        ItemStack echantmentOutputStack = new ItemStack(Items.ENCHANTED_BOOK);
+        echantmentOutputStack.set(DataComponentTypes.STORED_ENCHANTMENTS,
                 enchantmentComponent);
-        blockInventory.setStack(OUTPUT1_ID, outputStack);
+
+        if (consumeItem) {
+            blockInventory.setStack(OUTPUT1_ID, echantmentOutputStack);
+        } else {
+            ItemStack outputStack = input1.copy();
+            outputStack.remove(DataComponentTypes.ENCHANTMENTS);
+            blockInventory.setStack(OUTPUT1_ID, outputStack);
+            blockInventory.setStack(OUTPUT2_ID, echantmentOutputStack);
+        }
+
         xpCost = xpExtractionCost;
         secondInputUsageCount = 1;
-        outputSlotsUsed = 1;
-
+        outputSlotsUsed = (consumeItem ? 1 : 2);
         return null;
     }
 

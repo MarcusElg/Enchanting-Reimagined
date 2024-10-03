@@ -31,6 +31,8 @@
     "text.autoconfig.enchanting_reimagined.option.extraction": "Extracting Enchantments from Items",
     "text.autoconfig.enchanting_reimagined.option.extraction.allowExtraction": "Allow Extracting Enchantments",
     "text.autoconfig.enchanting_reimagined.option.extraction.allowExtraction.@Tooltip": "Allow extracting enchantments from items in the enchanting workstation",
+    "text.autoconfig.enchanting_reimagined.option.extraction.consumeItem": "Consume Item",
+    "text.autoconfig.enchanting_reimagined.option.extraction.consumeItem.@Tooltip": "If true the enchanted item is consumed and only an enchanted book is outputed",
     "text.autoconfig.enchanting_reimagined.option.extraction.extractionCost": "Extraction Xp Cost",
     "text.autoconfig.enchanting_reimagined.option.extraction.extractionCost.@Tooltip": "Xp cost for extracting enchantments",
     "text.autoconfig.enchanting_reimagined.option.extraction.extractionCostPerLevel": "Extraction Xp Cost per Enchantment Level",

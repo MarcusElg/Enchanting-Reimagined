@@ -43,6 +43,9 @@ public class EnchantingReimaginedConfig implements ConfigData {
         // items in an enchanting workstation
         public boolean allowExtraction = true;
         @ConfigEntry.Gui.Tooltip
+        // If true the item is consumed
+        public boolean consumeItem = true;
+        @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 0, max = 3)
         // Cost for extracting enchantments from book
         public int extractionCost = 1;
