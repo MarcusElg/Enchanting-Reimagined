@@ -262,7 +262,8 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
             blockInventory.setStack(OUTPUT1_ID, echantmentOutputStack);
         } else {
             ItemStack outputStack = input1.copy();
-            outputStack.remove(DataComponentTypes.ENCHANTMENTS);
+            outputStack.set(DataComponentTypes.ENCHANTMENTS,
+                    outputStack.getDefaultComponents().get(DataComponentTypes.ENCHANTMENTS));
             blockInventory.setStack(OUTPUT1_ID, outputStack);
             blockInventory.setStack(OUTPUT2_ID, echantmentOutputStack);
         }
@@ -324,7 +325,8 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
             if (!outputComponent.isEmpty()) {
                 outputStack.set(DataComponentTypes.ENCHANTMENTS, outputComponent);
             } else {
-                outputStack.remove(DataComponentTypes.ENCHANTMENTS);
+                outputStack.set(DataComponentTypes.ENCHANTMENTS,
+                        outputStack.getDefaultComponents().get(DataComponentTypes.ENCHANTMENTS));
             }
         }
 
