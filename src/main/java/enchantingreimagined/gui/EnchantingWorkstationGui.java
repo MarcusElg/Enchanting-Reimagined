@@ -198,7 +198,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         }
 
         // Repairing
-        else if (input1.isDamageable() && input1.getItem().canRepair(input1, input2)) {
+        else if (input1.isDamageable() && input1.canRepairWith(input2)) {
             State state = repairItem(config, input1, input2);
             if (state != null) {
                 return state;

@@ -23,6 +23,9 @@
 			"enchantingreimagined.EnchantingReimaginedModMenuIntegration"
 		]
 	},
+	"mixins": [
+		"enchantingreimagined.mixins.json"
+	],
 	"depends": {
 		"fabricloader": "*",
 		"fabric-api": "*",

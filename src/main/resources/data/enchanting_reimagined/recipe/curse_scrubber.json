@@ -6,12 +6,8 @@
         " N "
     ],
     "key": {
-        "N": {
-            "item": "minecraft:iron_nugget"
-        },
-        "S": {
-            "item": "minecraft:sponge"
-        }
+        "N": "minecraft:iron_nugget",
+        "S": "minecraft:sponge"
     },
     "result": {
         "id": "enchanting_reimagined:curse_scrubber",

@@ -6,15 +6,9 @@
         "DED"
     ],
     "key": {
-        "D": {
-            "item": "minecraft:diamond"
-        },
-        "E": {
-            "item": "minecraft:ender_pearl"
-        },
-        "S": {
-            "item": "enchanting_reimagined:enchantment_dust"
-        }
+        "D": "minecraft:diamond",
+        "E": "minecraft:ender_pearl",
+        "S": "enchanting_reimagined:enchantment_dust"
     },
     "result": {
         "id": "enchanting_reimagined:advanced_enchantment_dust",

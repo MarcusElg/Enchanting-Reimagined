@@ -1,13 +1,11 @@
 package enchantingreimagined;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import enchantingreimagined.gui.EnchantingWorkstationGui;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
@@ -16,10 +14,10 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.ScreenHandlerType;
@@ -40,12 +38,12 @@ public class EnchantingReimagined implements ModInitializer {
 
 	public static ItemGroup ENCHANTING_REIMAGINED_GROUP;
 
-	public static final Identifier INTERACT_WITH_ENCHANTING_WORKSTATION = get_id(
+	public static final Identifier INTERACT_WITH_ENCHANTING_WORKSTATION = getId(
 			"interact_with_enchanting_workstation");
-	public static final Identifier CRAFT_IN_ENCHANTING_WORKSTATION = get_id(
+	public static final Identifier CRAFT_IN_ENCHANTING_WORKSTATION = getId(
 			"craft_in_enchanting_workstation");
 
-	public static Identifier get_id(String id) {
+	public static Identifier getId(String id) {
 		return Identifier.of("enchanting_reimagined", id);
 	}
 
@@ -57,7 +55,6 @@ public class EnchantingReimagined implements ModInitializer {
 		registerGuis();
 		registerItemGroup();
 		registerStats();
-		removeRecipes();
 	}
 
 	private void registerConfig() {
@@ -65,33 +62,41 @@ public class EnchantingReimagined implements ModInitializer {
 	}
 
 	private void registerItems() {
-		ENCHANTMENT_DUST = Registry.register(Registries.ITEM, get_id("enchantment_dust"),
-				new TooltippedItem(new Item.Settings(),
+		ENCHANTMENT_DUST = Registry.register(Registries.ITEM, getId("enchantment_dust"),
+				new TooltippedItem(
+						new Item.Settings().registryKey(RegistryKey.of(RegistryKeys.ITEM, getId("enchantment_dust"))),
 						Arrays.asList("item.enchanting_reimagined.enchantment_dust.tooltip")));
-		ADVANCED_ENCHANTMENT_DUST = Registry.register(Registries.ITEM, get_id("advanced_enchantment_dust"),
-				new TooltippedItem(new Item.Settings(),
+		ADVANCED_ENCHANTMENT_DUST = Registry.register(Registries.ITEM, getId("advanced_enchantment_dust"),
+				new TooltippedItem(
+						new Item.Settings()
+								.registryKey(RegistryKey.of(RegistryKeys.ITEM, getId("advanced_enchantment_dust"))),
 						Arrays.asList("item.enchanting_reimagined.advanced_enchantment_dust.tooltip",
 								"item.enchanting_reimagined.advanced_enchantment_dust.tooltip.2")));
-		CURSER_SCRUBBER = Registry.register(Registries.ITEM, get_id("curse_scrubber"),
-				new TooltippedItem(new Item.Settings(),
+		CURSER_SCRUBBER = Registry.register(Registries.ITEM, getId("curse_scrubber"),
+				new TooltippedItem(
+						new Item.Settings().registryKey(RegistryKey.of(RegistryKeys.ITEM, getId("curse_scrubber"))),
 						Arrays.asList("item.enchanting_reimagined.curse_scrubber.tooltip")));
 	}
 
 	private void registerBlocks() {
 		ENCHANTING_WORKSTATION = new EnchantingWorkstationBlock(
-				Block.Settings.create().mapColor(MapColor.DEEPSLATE_GRAY)
+				Block.Settings.create()
+						.registryKey(RegistryKey.of(RegistryKeys.BLOCK, getId("enchanting_workstation")))
+						.mapColor(MapColor.DEEPSLATE_GRAY)
 						.instrument(NoteBlockInstrument.BASS).strength(2.5F).sounds(BlockSoundGroup.WOOD).burnable());
 		registerBlock(ENCHANTING_WORKSTATION, "enchanting_workstation");
 	}
 
 	private void registerBlock(Block block, String name) {
-		Registry.register(Registries.BLOCK, get_id(name), block);
-		Registry.register(Registries.ITEM, get_id(name), new BlockItem(block, new Item.Settings()));
+		Registry.register(Registries.BLOCK, getId(name), block);
+		Registry.register(Registries.ITEM, getId(name),
+				new BlockItem(block, new Item.Settings().useBlockPrefixedTranslationKey()
+						.registryKey(RegistryKey.of(RegistryKeys.ITEM, getId(name)))));
 	}
 
 	private void registerGuis() {
 		ENCHANTING_WORKSTATION_SCREEN_TYPE = Registry.register(Registries.SCREEN_HANDLER,
-				get_id("enchanting_workstation"),
+				getId("enchanting_workstation"),
 				new ScreenHandlerType<>(
 						(syncId, inventory) -> new EnchantingWorkstationGui(syncId, inventory,
 								ScreenHandlerContext.EMPTY),
@@ -99,7 +104,7 @@ public class EnchantingReimagined implements ModInitializer {
 	}
 
 	private void registerItemGroup() {
-		ENCHANTING_REIMAGINED_GROUP = Registry.register(Registries.ITEM_GROUP, get_id("enchanting_reimagined"),
+		ENCHANTING_REIMAGINED_GROUP = Registry.register(Registries.ITEM_GROUP, getId("enchanting_reimagined"),
 				FabricItemGroup.builder()
 						.icon(() -> new ItemStack(ENCHANTING_WORKSTATION))
 						.displayName(Text.translatable("itemGroup.enchating_reimagined.enchanting_reimagined"))
@@ -119,27 +124,5 @@ public class EnchantingReimagined implements ModInitializer {
 				CRAFT_IN_ENCHANTING_WORKSTATION);
 		Stats.CUSTOM.getOrCreateStat(INTERACT_WITH_ENCHANTING_WORKSTATION, StatFormatter.DEFAULT);
 		Stats.CUSTOM.getOrCreateStat(CRAFT_IN_ENCHANTING_WORKSTATION, StatFormatter.DEFAULT);
-	}
-
-	private void removeRecipes() {
-		EnchantingReimaginedConfig config = AutoConfig.getConfigHolder(EnchantingReimaginedConfig.class)
-				.getConfig();
-		if (!config.removeEnchantingTableRecipe) {
-			return;
-		}
-
-		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-			final RecipeManager recipeManager = server.getRecipeManager();
-			ArrayList<RecipeEntry<?>> newRecipes = new ArrayList<>();
-
-			for (RecipeEntry<?> recipe : recipeManager.values()) {
-				// Remove recipe by not adding it to the new list
-				if (!recipe.id().equals(Identifier.ofVanilla("enchanting_table"))) {
-					newRecipes.add(recipe);
-				}
-			}
-
-			recipeManager.setRecipes(newRecipes);
-		});
 	}
 }
