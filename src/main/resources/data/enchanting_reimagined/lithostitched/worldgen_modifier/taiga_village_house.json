@@ -1,6 +1,6 @@
 {
     "type": "lithostitched:add_template_pool_elements",
-    "template_pool": "minecraft:village/taiga/houses",
+    "template_pools": "minecraft:village/taiga/houses",
     "elements": [
         {
             "weight": 5,
