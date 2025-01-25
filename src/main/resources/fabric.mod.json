@@ -1,36 +1,34 @@
 {
-	"schemaVersion": 1,
-	"id": "enchanting_reimagined",
-	"version": "${version}",
-	"name": "Enchanting Reimagined",
-	"description": "Adds a new workstation for upgrading, applying, splitting books and more",
-	"authors": [
-		"Marcus Elg"
-	],
-	"icon": "assets/enchanting_reimagined/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"enchantingreimagined.EnchantingReimagined"
-		],
-		"client": [
-			"enchantingreimagined.EnchantingReimaginedClient"
-		],
-		"fabric-datagen": [
-			"enchantingreimagined.EnchantingReimaginedDataGenerator"
-		],
-		"modmenu": [
-			"enchantingreimagined.EnchantingReimaginedModMenuIntegration"
-		]
-	},
-	"mixins": [
-		"enchantingreimagined.mixins.json"
-	],
-	"depends": {
-		"fabricloader": "*",
-		"fabric-api": "*",
-		"cloth-config": "*",
-		"lithostitched": "*"
-	},
-	"license": "MIT"
+    "schemaVersion": 1,
+    "id": "enchanting_reimagined",
+    "version": "${version}",
+    "name": "Enchanting Reimagined",
+    "description": "Adds a new workstation for upgrading, applying, splitting books and more",
+    "authors": [
+        "Marcus Elg"
+    ],
+    "icon": "assets/enchanting_reimagined/icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "enchantingreimagined.EnchantingReimagined"
+        ],
+        "client": [
+            "enchantingreimagined.EnchantingReimaginedClient"
+        ],
+        "fabric-datagen": [
+            "enchantingreimagined.EnchantingReimaginedDataGenerator"
+        ],
+        "modmenu": [
+            "enchantingreimagined.EnchantingReimaginedModMenuIntegration"
+        ]
+    },
+    "mixins": [],
+    "depends": {
+        "fabricloader": "*",
+        "fabric-api": "*",
+        "cloth-config": "*",
+        "lithostitched": "*"
+    },
+    "license": "MIT"
 }
