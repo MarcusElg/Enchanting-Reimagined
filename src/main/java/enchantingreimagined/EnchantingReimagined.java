@@ -3,6 +3,7 @@ package enchantingreimagined;
 import java.util.Arrays;
 
 import enchantingreimagined.gui.EnchantingWorkstationGui;
+import enchantingreimagined.resourceconditions.CraftableAdvancedEnchantmentDustResourceCondition;
 import enchantingreimagined.resourceconditions.CraftableEnchantingTableResourceCondition;
 import enchantingreimagined.resourceconditions.CurseScrubbingResourceCondition;
 import enchantingreimagined.resourceconditions.EnchantmentUpgradingResourceCondition;
@@ -50,6 +51,9 @@ public class EnchantingReimagined implements ModInitializer {
 
     public static final ResourceConditionType<CraftableEnchantingTableResourceCondition> CRAFTABLE_ENCHANTING_TABLE_RESOURCE_CONDITION = ResourceConditionType
             .create(getId("craftable_enchanting_table"), CraftableEnchantingTableResourceCondition.CODEC);
+    public static final ResourceConditionType<CraftableAdvancedEnchantmentDustResourceCondition> CRAFTABLE_ADVANCED_ENCHANTMENT_DUST_RESOURCE_CONDITION = ResourceConditionType
+            .create(getId("craftable_advanced_enchantment_dust"),
+                    CraftableAdvancedEnchantmentDustResourceCondition.CODEC);
     public static final ResourceConditionType<CurseScrubbingResourceCondition> CURSE_SCRUBBING_RESOURCE_CONDITION = ResourceConditionType
             .create(getId("curse_scrubbing_enabled"), CurseScrubbingResourceCondition.CODEC);
     public static final ResourceConditionType<EnchantmentUpgradingResourceCondition> ENCHANTMENT_UPGRADING_RESOURCE_CONDITION = ResourceConditionType
@@ -141,6 +145,7 @@ public class EnchantingReimagined implements ModInitializer {
 
     private void registerResourceConditions() {
         ResourceConditions.register(CRAFTABLE_ENCHANTING_TABLE_RESOURCE_CONDITION);
+        ResourceConditions.register(CRAFTABLE_ADVANCED_ENCHANTMENT_DUST_RESOURCE_CONDITION);
         ResourceConditions.register(CURSE_SCRUBBING_RESOURCE_CONDITION);
         ResourceConditions.register(ENCHANTMENT_UPGRADING_RESOURCE_CONDITION);
     }

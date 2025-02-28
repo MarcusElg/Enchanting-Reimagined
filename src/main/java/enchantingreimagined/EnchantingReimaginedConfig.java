@@ -8,6 +8,7 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 public class EnchantingReimaginedConfig implements ConfigData {
     // If true removes enchanting table recipe
     public boolean removeEnchantingTableRecipe = false;
+    public boolean craftableAdvancedEnchantmentDust = true;
 
     @ConfigEntry.Gui.CollapsibleObject
     public RepairConfig repairing = new RepairConfig();

@@ -21,6 +21,7 @@
     "itemGroup.enchating_reimagined.enchanting_reimagined": "Enchanting Reimagined",
     "text.autoconfig.enchanting_reimagined.title": "Enchanting Reimagined",
     "text.autoconfig.enchanting_reimagined.option.removeEnchantingTableRecipe": "Remove Enchanting Table Recipe",
+    "text.autoconfig.enchanting_reimagined.option.craftableAdvancedEnchantmentDust": "Craftable Advanced Enchantment Dust",
     "text.autoconfig.enchanting_reimagined.option.repairing": "Repairing Items",
     "text.autoconfig.enchanting_reimagined.option.repairing.allowRepair": "Allow Repairing Items",
     "text.autoconfig.enchanting_reimagined.option.repairing.allowRepair.@Tooltip": "Allow repairing items in the enchanting workstation",
