@@ -1,9 +1,11 @@
-package enchantingreimagined;
+package enchantingreimagined.resourceconditions;
 
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
 
+import enchantingreimagined.EnchantingReimagined;
+import enchantingreimagined.EnchantingReimaginedConfig;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;

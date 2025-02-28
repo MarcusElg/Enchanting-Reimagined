@@ -3,6 +3,9 @@ package enchantingreimagined;
 import java.util.Arrays;
 
 import enchantingreimagined.gui.EnchantingWorkstationGui;
+import enchantingreimagined.resourceconditions.CraftableEnchantingTableResourceCondition;
+import enchantingreimagined.resourceconditions.CurseScrubbingResourceCondition;
+import enchantingreimagined.resourceconditions.EnchantmentUpgradingResourceCondition;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
@@ -47,6 +50,10 @@ public class EnchantingReimagined implements ModInitializer {
 
     public static final ResourceConditionType<CraftableEnchantingTableResourceCondition> CRAFTABLE_ENCHANTING_TABLE_RESOURCE_CONDITION = ResourceConditionType
             .create(getId("craftable_enchanting_table"), CraftableEnchantingTableResourceCondition.CODEC);
+    public static final ResourceConditionType<CurseScrubbingResourceCondition> CURSE_SCRUBBING_RESOURCE_CONDITION = ResourceConditionType
+            .create(getId("curse_scrubbing_enabled"), CurseScrubbingResourceCondition.CODEC);
+    public static final ResourceConditionType<EnchantmentUpgradingResourceCondition> ENCHANTMENT_UPGRADING_RESOURCE_CONDITION = ResourceConditionType
+            .create(getId("enchantment_upgrading_enabled"), EnchantmentUpgradingResourceCondition.CODEC);
 
     public static Identifier getId(String id) {
         return Identifier.of("enchanting_reimagined", id);
@@ -134,5 +141,7 @@ public class EnchantingReimagined implements ModInitializer {
 
     private void registerResourceConditions() {
         ResourceConditions.register(CRAFTABLE_ENCHANTING_TABLE_RESOURCE_CONDITION);
+        ResourceConditions.register(CURSE_SCRUBBING_RESOURCE_CONDITION);
+        ResourceConditions.register(ENCHANTMENT_UPGRADING_RESOURCE_CONDITION);
     }
 }

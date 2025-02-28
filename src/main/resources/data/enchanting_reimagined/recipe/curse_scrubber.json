@@ -1,4 +1,9 @@
 {
+    "fabric:load_conditions": [
+        {
+            "condition": "enchanting_reimagined:curse_scrubbing_enabled"
+        }
+    ],
     "type": "minecraft:crafting_shaped",
     "pattern": [
         " N ",

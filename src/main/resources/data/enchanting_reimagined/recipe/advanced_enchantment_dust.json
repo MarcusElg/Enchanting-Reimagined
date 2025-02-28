@@ -1,4 +1,9 @@
 {
+    "fabric:load_conditions": [
+        {
+            "condition": "enchanting_reimagined:enchantment_upgrading_enabled"
+        }
+    ],
     "type": "minecraft:crafting_shaped",
     "pattern": [
         "DED",
