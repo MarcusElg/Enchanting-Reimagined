@@ -1,7 +1,9 @@
 package enchantingreimagined;
 
 import java.util.List;
+import java.util.function.Consumer;
 
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
@@ -17,9 +19,10 @@ public class TooltippedItem extends Item {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
+    public void appendTooltip(ItemStack stack, Item.TooltipContext context, TooltipDisplayComponent displayComponent,
+            Consumer<Text> textConsumer, TooltipType type) {
         for (String tooltip_key : tooltip_keys) {
-            tooltip.add(Text.translatable(tooltip_key));
+            textConsumer.accept(Text.translatable(tooltip_key));
         }
     }
 }
