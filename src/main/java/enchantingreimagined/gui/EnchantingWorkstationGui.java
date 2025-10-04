@@ -632,7 +632,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
                 hasCrafted = true;
 
                 // Let detection be done on both client and server
-                if (!world.isClient) {
+                if (!world.isClient()) {
                     resetValues();
                 }
             }
@@ -641,7 +641,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         // Detect all output items taken
         if (hasCrafted) {
             if (blockInventory.getStack(OUTPUT1_ID).isEmpty() && blockInventory.getStack(OUTPUT2_ID).isEmpty()) {
-                if (!world.isClient) {
+                if (!world.isClient()) {
                     hasCrafted = false;
                 } else {
                     return;
