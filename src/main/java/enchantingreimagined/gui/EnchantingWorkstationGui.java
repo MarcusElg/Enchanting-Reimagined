@@ -411,6 +411,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
             for (RegistryEntry<Enchantment> enchantment2 : outputEnchantments.getEnchantments()) {
                 // Cannot combine
                 if (enchantment.value() != enchantment2.value()
+                        && !config.combining.allowInvalidCombinations
                         && (enchantment.value().exclusiveSet().contains(enchantment2)
                                 || enchantment2.value().exclusiveSet().contains(enchantment))) {
                     continueOuter = true;

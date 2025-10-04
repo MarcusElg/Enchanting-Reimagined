@@ -89,6 +89,9 @@ public class EnchantingReimaginedConfig implements ConfigData {
         @ConfigEntry.BoundedDiscrete(min = 0, max = 50)
         // Cost for applying enchantments to an item
         public int combiningCost = 0;
+        @ConfigEntry.Gui.Tooltip
+        // If true allows for invalid combinations such as fortune and silk touch
+        public boolean allowInvalidCombinations = false;
     }
 
     public static class SplittingConfig {

@@ -55,6 +55,8 @@
     "text.autoconfig.enchanting_reimagined.option.combining.allowCombining.@Tooltip": "Allow combining enchanted books in the enchanting workstation",
     "text.autoconfig.enchanting_reimagined.option.combining.combiningCost": "Combining Xp Cost",
     "text.autoconfig.enchanting_reimagined.option.combining.combiningCost.@Tooltip": "Fixed xp cost for combining enchanted books",
+    "text.autoconfig.enchanting_reimagined.option.combining.allowInvalidCombinations": "Allow invalid enchantment combinations",
+    "text.autoconfig.enchanting_reimagined.option.combining.allowInvalidCombinations.@Tooltip": "Allow invalid enchantment combinations such as fortune and silk touch",
     "text.autoconfig.enchanting_reimagined.option.splitting": "Splitting Enchanted Books",
     "text.autoconfig.enchanting_reimagined.option.splitting.allowSplitting": "Allow Splitting Enchanted Books",
     "text.autoconfig.enchanting_reimagined.option.splitting.allowSplitting.@Tooltip": "Allow splitting enchanted books in the enchanting workstation",
