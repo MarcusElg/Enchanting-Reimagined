@@ -3,49 +3,50 @@ package enchantingreimagined;
 import com.mojang.serialization.MapCodec;
 
 import enchantingreimagined.gui.EnchantingWorkstationGui;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
 public class EnchantingWorkstationBlock extends Block {
 
-    public static final MapCodec<EnchantingWorkstationBlock> CODEC = createCodec(EnchantingWorkstationBlock::new);
-    private static final Text SCREEN_TITLE = Text
+    public static final MapCodec<EnchantingWorkstationBlock> CODEC = simpleCodec(EnchantingWorkstationBlock::new);
+    private static final Component SCREEN_TITLE = Component
             .translatable("container.enchanting_reimagined.enchanting_workstation");
 
     @Override
-    public MapCodec<EnchantingWorkstationBlock> getCodec() {
+    public MapCodec<EnchantingWorkstationBlock> codec() {
         return CODEC;
     }
 
-    public EnchantingWorkstationBlock(Block.Settings settings) {
+    public EnchantingWorkstationBlock(Block.Properties settings) {
         super(settings);
     }
 
     @Override
-    protected NamedScreenHandlerFactory createScreenHandlerFactory(BlockState state, World world, BlockPos pos) {
-        return new SimpleNamedScreenHandlerFactory(
+    protected MenuProvider getMenuProvider(BlockState state, Level world, BlockPos pos) {
+        return new SimpleMenuProvider(
                 (syncId, inventory, player) -> new EnchantingWorkstationGui(syncId, inventory,
-                        ScreenHandlerContext.create(world, pos)),
+                        ContainerLevelAccess.create(world, pos)),
                 SCREEN_TITLE);
     }
 
     @Override
-    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (world.isClient()) {
-            return ActionResult.SUCCESS;
+    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player,
+            BlockHitResult hit) {
+        if (world.isClientSide()) {
+            return InteractionResult.SUCCESS;
         } else {
-            player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
-            player.incrementStat(EnchantingReimagined.INTERACT_WITH_ENCHANTING_WORKSTATION);
-            return ActionResult.CONSUME;
+            player.openMenu(state.getMenuProvider(world, pos));
+            player.awardStat(EnchantingReimagined.INTERACT_WITH_ENCHANTING_WORKSTATION);
+            return InteractionResult.CONSUME;
         }
     }
 }

@@ -1,7 +1,7 @@
 package enchantingreimagined.gui;
 
 import enchantingreimagined.EnchantingReimagined;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 public class GuiHelper {
         public static final int EXPERIENCE_COLOR = 8453920;

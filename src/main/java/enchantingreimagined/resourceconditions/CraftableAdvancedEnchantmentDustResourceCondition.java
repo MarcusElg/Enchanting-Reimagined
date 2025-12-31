@@ -9,7 +9,7 @@ import enchantingreimagined.EnchantingReimaginedConfig;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;
-import net.minecraft.registry.RegistryOps.RegistryInfoGetter;
+import net.minecraft.resources.RegistryOps.RegistryInfoLookup;
 
 public record CraftableAdvancedEnchantmentDustResourceCondition() implements ResourceCondition {
 
@@ -22,7 +22,7 @@ public record CraftableAdvancedEnchantmentDustResourceCondition() implements Res
     }
 
     @Override
-    public boolean test(@Nullable RegistryInfoGetter registryInfo) {
+    public boolean test(@Nullable RegistryInfoLookup registryInfo) {
         return AutoConfig.getConfigHolder(EnchantingReimaginedConfig.class)
                 .getConfig().craftableAdvancedEnchantmentDust;
     }
