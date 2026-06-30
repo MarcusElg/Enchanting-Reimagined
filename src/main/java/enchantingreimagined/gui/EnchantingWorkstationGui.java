@@ -23,7 +23,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -607,8 +607,9 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
     }
 
     @Override
-    public void clicked(int slotIndex, int button, ClickType actionType, Player player) {
-        super.clicked(slotIndex, button, actionType, player);
+    public void clicked(final int slotIndex, final int button, final ContainerInput containerInput,
+            final Player player) {
+        super.clicked(slotIndex, button, containerInput, player);
 
         // Detect taking first item from output
         if (outputSlotsUsed > 0
@@ -633,7 +634,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
                 hasCrafted = true;
 
                 // Let detection be done on both client and server
-                if (!world.isClientSide()) {
+                if (!getLevel().isClientSide()) {
                     resetValues();
                 }
             }
@@ -642,7 +643,7 @@ public class EnchantingWorkstationGui extends SyncedGuiDescription {
         // Detect all output items taken
         if (hasCrafted) {
             if (blockInventory.getItem(OUTPUT1_ID).isEmpty() && blockInventory.getItem(OUTPUT2_ID).isEmpty()) {
-                if (!world.isClientSide()) {
+                if (!getLevel().isClientSide()) {
                     hasCrafted = false;
                 } else {
                     return;

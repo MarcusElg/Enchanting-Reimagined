@@ -10,7 +10,7 @@ import enchantingreimagined.resourceconditions.EnchantmentUpgradingResourceCondi
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.core.Registry;
@@ -123,7 +123,7 @@ public class EnchantingReimagined implements ModInitializer {
     private void registerItemGroup() {
         ENCHANTING_REIMAGINED_GROUP = Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,
                 getId("enchanting_reimagined"),
-                FabricItemGroup.builder()
+                FabricCreativeModeTab.builder()
                         .icon(() -> new ItemStack(ENCHANTING_WORKSTATION))
                         .title(Component.translatable("itemGroup.enchating_reimagined.enchanting_reimagined"))
                         .displayItems((context, entries) -> {
